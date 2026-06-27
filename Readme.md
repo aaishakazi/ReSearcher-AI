@@ -42,13 +42,21 @@ PDFs are processed locally in your browser and only the extracted content is sen
 ---
 # 📸 Screenshots
 
-| Document Viewer & Multi-Upload | AI Generation (Presentations / Flashcards) |
-|--------------------------------|--------------------------------------------|
-| <img src="assets/document-viewer.png" alt="Document Viewer" width="450"/> | <img src="assets/ai-generation.mp4" alt="AI Generation Modal" width="450"/> |
+| Document Viewer & Multi-Upload |
+|--------------------------------|
+| <img src="assets/document-viewer.png" alt="Document Viewer" width="450"/> | 
 
-| Arabic Localization (RTL Support) | Saved Generations List |
-|-----------------------------------|------------------------|
-| <img src="assets/arabic-support.png" alt="Arabic RTL Support" width="450"/> | <img src="assets/saved-generations.png" alt="Saved Generations" width="450"/> |
+| AI Generation (Presentations / Flashcards) |
+|--------------------------------------------|
+|<img src="assets/ai-generation.mp4" alt="AI Generation Modal" width="450"/> |
+
+| Arabic Localization (RTL Support) |
+|-----------------------------------|
+| <img src="assets/arabic-support.png" alt="Arabic RTL Support" width="450"/> | 
+
+| Saved Generations List |
+|------------------------|
+|<img src="assets/saved-generations.png" alt="Saved Generations" width="450"/> |
 
 ---
 
