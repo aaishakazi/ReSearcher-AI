@@ -42,11 +42,6 @@ Your documents remain private.
 PDFs are processed locally in your browser and only the extracted content is sent directly to your own **Google Gemini API** endpoint. No documents are stored on any central server.
 
 ---
-# Demo
-
-
-
----
 
 # 📸 Screenshots
 
