@@ -44,7 +44,7 @@ PDFs are processed locally in your browser and only the extracted content is sen
 ---
 # Demo
 
-[![Watch the Demo](https://img.shields.io/badge/▶️%20Watch-Demo-red?style=for-the-badge)](https://your-video-link)
+
 
 ---
 
