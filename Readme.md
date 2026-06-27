@@ -52,7 +52,7 @@ PDFs are processed locally in your browser and only the extracted content is sen
 
 | Arabic Localization |
 |-----------------------------------|
-| <img src="assets/arabic-support.png" alt="Arabic RTL Support" width="600"/> | 
+| <img src="assets/arabic1.png" alt="Arabic RTL Support" width="600"/> | 
 
 | Saved Generations List |
 |------------------------|
@@ -69,7 +69,7 @@ PDFs are processed locally in your browser and only the extracted content is sen
 <img src="assets/ai-generation.png" alt="AI Generation" width="800"/>
 
 ### 🌍 Arabic Localization (RTL Support)
-<img src="assets/arabic-support.png" alt="Arabic Support" width="800"/>
+<img src="assets/arabic1.png" alt="Arabic Support" width="800"/>
 
 ### 💾 Saved Generations
 <img src="assets/saved-generations.png" alt="Saved Generations" width="800"/>
