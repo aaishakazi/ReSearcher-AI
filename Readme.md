@@ -48,7 +48,7 @@ PDFs are processed locally in your browser and only the extracted content is sen
 
 | AI Generation (Presentations / Flashcards) |
 |--------------------------------------------|
-|<img src="assets/ai-generation.mp4" alt="AI Generation Modal" width="600"/> |
+|<img src="assets/ai-generation.png" alt="AI Generation Modal" width="600"/> |
 
 | Arabic Localization |
 |-----------------------------------|
