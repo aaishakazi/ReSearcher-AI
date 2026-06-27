@@ -1,5 +1,7 @@
 # 🚀 ReSearcherAI
 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-00C853?style=for-the-badge&logo=vercel)](https://researcher-ai-zeta.vercel.app/)
+
 **An Intelligent, Bilingual Document Analysis & Generative Learning Platform**
 > **Transform static documents into dynamic learning experiences in seconds.**
 
@@ -40,13 +42,19 @@ Your documents remain private.
 PDFs are processed locally in your browser and only the extracted content is sent directly to your own **Google Gemini API** endpoint. No documents are stored on any central server.
 
 ---
+# Demo
+
+[![Watch the Demo](https://img.shields.io/badge/▶️%20Watch-Demo-red?style=for-the-badge)](https://your-video-link)
+
+---
+
 # 📸 Screenshots
 
 | Document Viewer & Multi-Upload |
 |--------------------------------|
 | <img src="assets/document-viewer.png" alt="Document Viewer" width="600"/> | 
 
-| AI Generation (Presentations / Flashcards) |
+| AI Generation (Flashcards) |
 |--------------------------------------------|
 |<img src="assets/ai-generation.png" alt="AI Generation Modal" width="600"/> |
 
