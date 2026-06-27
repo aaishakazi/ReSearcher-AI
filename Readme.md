@@ -58,21 +58,6 @@ PDFs are processed locally in your browser and only the extracted content is sen
 |------------------------|
 |<img src="assets/saved-generations.png" alt="Saved Generations" width="600"/> |
 
----
-
-## 🖼️ Additional Screenshots
-
-### 📄 Document Viewer & Multi-Upload
-<img src="assets/document-viewer.png" alt="Document Viewer" width="800"/>
-
-### 🤖 AI Generation (Presentations / Flashcards)
-<img src="assets/ai-generation.png" alt="AI Generation" width="800"/>
-
-### 🌍 Arabic Localization (RTL Support)
-<img src="assets/arabic1.png" alt="Arabic Support" width="800"/>
-
-### 💾 Saved Generations
-<img src="assets/saved-generations.png" alt="Saved Generations" width="800"/>
 
 ---
 
