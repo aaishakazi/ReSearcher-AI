@@ -44,35 +44,35 @@ PDFs are processed locally in your browser and only the extracted content is sen
 
 | Document Viewer & Multi-Upload |
 |--------------------------------|
-| <img src="assets/document-viewer.png" alt="Document Viewer" width="450"/> | 
+| <img src="assets/document-viewer.png" alt="Document Viewer" width="600"/> | 
 
 | AI Generation (Presentations / Flashcards) |
 |--------------------------------------------|
-|<img src="assets/ai-generation.mp4" alt="AI Generation Modal" width="450"/> |
+|<img src="assets/ai-generation.mp4" alt="AI Generation Modal" width="600"/> |
 
-| Arabic Localization (RTL Support) |
+| Arabic Localization |
 |-----------------------------------|
-| <img src="assets/arabic-support.png" alt="Arabic RTL Support" width="450"/> | 
+| <img src="assets/arabic-support.png" alt="Arabic RTL Support" width="600"/> | 
 
 | Saved Generations List |
 |------------------------|
-|<img src="assets/saved-generations.png" alt="Saved Generations" width="450"/> |
+|<img src="assets/saved-generations.png" alt="Saved Generations" width="600"/> |
 
 ---
 
 ## 🖼️ Additional Screenshots
 
 ### 📄 Document Viewer & Multi-Upload
-<img src="images/document-viewer.png" alt="Document Viewer" width="800"/>
+<img src="assets/document-viewer.png" alt="Document Viewer" width="800"/>
 
 ### 🤖 AI Generation (Presentations / Flashcards)
-<img src="images/ai-generation.png" alt="AI Generation" width="800"/>
+<img src="assets/ai-generation.png" alt="AI Generation" width="800"/>
 
 ### 🌍 Arabic Localization (RTL Support)
-<img src="images/arabic-support.png" alt="Arabic Support" width="800"/>
+<img src="assets/arabic-support.png" alt="Arabic Support" width="800"/>
 
 ### 💾 Saved Generations
-<img src="images/saved-generations.png" alt="Saved Generations" width="800"/>
+<img src="assets/saved-generations.png" alt="Saved Generations" width="800"/>
 
 ---
 
