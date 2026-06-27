@@ -44,7 +44,7 @@ PDFs are processed locally in your browser and only the extracted content is sen
 
 | Document Viewer & Multi-Upload | AI Generation (Presentations / Flashcards) |
 |--------------------------------|--------------------------------------------|
-| <img src="images/document-viewer.png" alt="Document Viewer" width="450"/> | <img src="images/ai-generation.png" alt="AI Generation Modal" width="450"/> |
+| <img src="images/document-viewer.png" alt="Document Viewer" width="450"/> | <img src="images/ai-generation.mp4" alt="AI Generation Modal" width="450"/> |
 
 | Arabic Localization (RTL Support) | Saved Generations List |
 |-----------------------------------|------------------------|
