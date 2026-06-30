@@ -9,8 +9,6 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         .active-tab { border-bottom: 2px solid #1f2937; color: #111827 !important; }
         [dir="rtl"] { direction: rtl; text-align: right; }
-        .tooltip-content { display: none; }
-        .group:hover .tooltip-content { display: block; }
         
         /* Flashcard Styles */
         .perspective-1000 { perspective: 1000px; }
@@ -19,7 +17,7 @@
         .rotate-y-180 { transform: rotateY(180deg); }
         
         /* Loading Spinner */
-        .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid #111827; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         /* Typing Indicator */
@@ -46,10 +44,11 @@
 </head>
 <body class="h-screen flex flex-col bg-white text-gray-800 overflow-hidden">
 
+    <!-- Header: Explicit z-20 to sit clean over mobile drawers -->
     <header class="h-16 border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 shrink-0 bg-white z-20 relative">
         <div class="flex items-center gap-3">
-            <!-- Mobile Menu Toggle Button -->
-            <button id="mobile-menu-btn" class="lg:hidden p-1 text-gray-600 hover:bg-gray-100 rounded focus:outline-none">
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-btn" class="lg:hidden p-1.5 text-gray-600 hover:bg-gray-100 rounded focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
             <svg class="w-6 h-6 text-gray-900 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s2.584.477 3.75 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -59,28 +58,30 @@
         <div class="flex items-center gap-2 sm:gap-4">
             <button id="lang-toggle" class="px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 rounded font-bold transition-colors">EN / AR</button>
             <div class="flex items-center gap-2">
-                <input type="password" id="api-key" placeholder="Gemini API Key..." class="border rounded px-2 py-1.5 sm:px-3 sm:py-1.5 text-xs sm:text-sm w-32 sm:w-64 focus:outline-none focus:ring-1 focus:ring-gray-400">
-                <div class="relative group cursor-pointer hidden sm:block">
+                <input type="password" id="api-key" placeholder="Gemini API Key..." class="border rounded px-2 py-1.5 sm:px-3 sm:py-1.5 text-xs sm:text-sm w-28 sm:w-64 focus:outline-none focus:ring-1 focus:ring-gray-400">
+                
+                <!-- Fixed Tooltip Z-indexing context -->
+                <div class="relative group cursor-pointer hidden sm:block z-50">
                     <div class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200">?</div>
-                    <div id="api-tooltip" class="absolute right-0 top-8 hidden group-hover:block w-72 bg-white border border-gray-200 text-gray-800 text-xs p-4 rounded-lg shadow-xl z-50">
+                    <div id="api-tooltip" class="absolute right-0 top-8 hidden group-hover:block w-72 bg-white border border-gray-200 text-gray-800 text-xs p-4 rounded-lg shadow-xl z-[90]">
                         <p class="font-bold mb-2" data-i18n="tooltip_title">How to get your API Key:</p>
                         <ol id="tooltip-steps" class="list-decimal list-inside space-y-1.5"></ol>
                     </div>
                 </div>
                 <div id="status-dot" class="w-2 h-2 bg-red-500 rounded-full hidden sm:block"></div>
             </div>
-            <!-- Mobile Chat Toggle Button -->
-            <button id="chat-toggle-btn" class="lg:hidden p-1 text-gray-600 hover:bg-gray-100 rounded focus:outline-none ml-1">
+            <!-- Mobile Chat Toggle -->
+            <button id="chat-toggle-btn" class="lg:hidden p-1.5 text-gray-600 hover:bg-gray-100 rounded focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
             </button>
         </div>
     </header>
 
     <main class="flex-1 flex overflow-hidden relative">
-        <!-- Overlay for Mobile Sidebars -->
+        <!-- Overlay for Mobile Sliding Drawers -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden"></div>
 
-        <!-- Sidebar (Left) - Offcanvas on small screens -->
+        <!-- Left Sidebar (Sliding Offcanvas on mobile) -->
         <aside id="left-sidebar" class="w-64 border-r flex flex-col p-4 gap-6 shrink-0 bg-gray-50 fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 h-full shadow-2xl lg:shadow-none">
             <button id="close-left-sidebar" class="absolute top-4 right-4 lg:hidden text-gray-500 hover:text-gray-800 p-1">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -92,10 +93,13 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span data-i18n="upload_btn">Upload PDFs</span>
                 </button>
-                <div class="mt-6">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-2" data-i18n="uploaded_docs">Uploaded Documents</h4>
-                    <div id="no-docs-msg" class="text-sm text-gray-400 text-center py-6 border-2 border-dashed rounded-lg" data-i18n="no_docs">No documents uploaded.</div>
-                    <ul id="pdf-list-container" class="text-left text-sm space-y-1 hidden"></ul>
+                
+                <!-- Persistent state-based uploaded documents lists -->
+                <div class="mt-4 border-t border-gray-200 pt-4">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2" data-i18n="uploaded_docs_header">Uploaded Documents</h4>
+                    <div id="file-list" class="text-xs text-gray-400 space-y-1 max-h-48 overflow-y-auto">
+                        <div class="text-center py-6 border border-dashed rounded-lg" data-i18n="no_docs">No documents uploaded.</div>
+                    </div>
                 </div>
             </div>
 
@@ -118,7 +122,7 @@
             </div>
         </aside>
 
-        <!-- Main Center Area - takes up full width on mobile -->
+        <!-- Main Center Area - Occupies full space on small displays -->
         <section class="flex-1 flex flex-col bg-white relative overflow-hidden min-w-0">
             <div class="h-12 border-b flex items-center px-4 lg:px-6 gap-6 bg-white shrink-0 z-10 overflow-x-auto whitespace-nowrap scrollbar-hide">
                 <button class="view-tab active-tab text-sm font-medium pb-2 pt-2 text-gray-400 transition-colors" data-tab="document" data-i18n="doc_viewer">Document Viewer</button>
@@ -162,42 +166,45 @@
                 </div>
 
                 <!-- 2. Mindmap Viewer -->
-                <div id="view-mindmap" class="absolute inset-0 hidden bg-gray-50 flex flex-col overflow-hidden">
-                    <!-- List View -->
-                    <div id="mindmap-list-view" class="w-full h-full p-4 sm:p-8 flex flex-col overflow-y-auto">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="mindmap_title">Your Mindmaps</h2>
-                        <div id="empty-mindmap" class="flex-1 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl" data-i18n="empty_mindmap">No mindmaps generated yet. Use the tools menu to create one.</div>
-                        <div id="mindmap-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10"></div>
+                <div id="view-mindmap" class="absolute inset-0 hidden bg-gray-50 flex-col">
+                    <div id="mindmap-list-view" class="flex-1 p-6 overflow-y-auto">
+                        <div id="empty-mindmap" class="h-full flex items-center justify-center text-gray-400" data-i18n="no_items">No items generated yet.</div>
+                        <div id="mindmap-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
                     </div>
-                    <!-- Detail View -->
-                    <div id="mindmap-detail-view" class="hidden flex-1 relative w-full h-full bg-white">
-                        <button onclick="backToList('mindmap')" class="absolute top-4 left-4 z-30 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg> Back</button>
-                        <div id="mynetwork" class="w-full h-full focus:outline-none"></div>
-                        
-                        <div id="mindmap-detail-panel" class="absolute right-4 top-4 bottom-4 w-72 bg-white/95 border border-gray-200 rounded-xl shadow-xl p-4 hidden flex-col z-20 transition-all">
-                            <div class="flex justify-between items-center mb-3 border-b pb-2">
-                                <h4 id="node-detail-title" class="font-bold text-gray-900 truncate pr-4">Node Topic</h4>
-                                <button onclick="closeMindmapDetail()" class="text-gray-400 hover:text-gray-600">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
+                    <div id="mindmap-detail-view" class="hidden absolute inset-0 bg-white flex flex-col">
+                        <div class="h-12 border-b flex items-center px-4 bg-gray-50 z-10 shrink-0">
+                            <button class="back-to-list-btn text-sm text-gray-600 hover:text-black font-medium flex items-center gap-1" data-target="mindmap">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                                <span data-i18n="back_to_list">Back to List</span>
+                            </button>
+                        </div>
+                        <div class="flex-1 relative">
+                            <div id="mynetwork" class="absolute inset-0 focus:outline-none"></div>
+                            <div id="mindmap-detail-panel" class="absolute right-4 top-4 bottom-4 w-72 bg-white/95 border border-gray-200 rounded-xl shadow-xl p-4 hidden flex-col z-20 transition-all">
+                                <div class="flex justify-between items-center mb-3 border-b pb-2">
+                                    <h4 id="node-detail-title" class="font-bold text-gray-900 truncate pr-4">Node Topic</h4>
+                                    <button onclick="closeMindmapDetail()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                                <p id="node-detail-desc" class="text-sm text-gray-600 leading-relaxed overflow-y-auto flex-1">Click nodes in the map to see expanded details here.</p>
                             </div>
-                            <p id="node-detail-desc" class="text-sm text-gray-600 leading-relaxed overflow-y-auto flex-1">Click nodes in the map to see expanded details here.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. Flashcards Viewer -->
-                <div id="view-flashcards" class="absolute inset-0 hidden bg-gray-50 flex flex-col overflow-hidden">
-                    <!-- List View -->
-                    <div id="flashcards-list-view" class="w-full h-full p-4 sm:p-8 flex flex-col overflow-y-auto">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="flashcards_title">Your Flashcard Sets</h2>
-                        <div id="empty-flashcards" class="flex-1 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl" data-i18n="empty_flashcards">No flashcards generated yet. Use the tools menu to create one.</div>
-                        <div id="flashcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10"></div>
+                <div id="view-flashcards" class="absolute inset-0 hidden bg-gray-50 flex-col">
+                    <div id="flashcards-list-view" class="flex-1 p-6 overflow-y-auto">
+                        <div id="empty-flashcards" class="h-full flex items-center justify-center text-gray-400" data-i18n="no_items">No items generated yet.</div>
+                        <div id="flashcards-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
                     </div>
-                    <!-- Detail View -->
-                    <div id="flashcards-detail-view" class="hidden flex-1 relative w-full h-full bg-gray-50 flex flex-col overflow-hidden">
-                        <div class="shrink-0 p-4 border-b bg-white flex items-center">
-                            <button onclick="backToList('flashcards')" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg> Back</button>
+                    <div id="flashcards-detail-view" class="hidden absolute inset-0 bg-gray-50 flex flex-col">
+                        <div class="h-12 border-b flex items-center px-4 bg-white z-10 shrink-0">
+                            <button class="back-to-list-btn text-sm text-gray-600 hover:text-black font-medium flex items-center gap-1" data-target="flashcards">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                                <span data-i18n="back_to_list">Back to List</span>
+                            </button>
                         </div>
                         <div class="flex-1 overflow-y-auto p-6 md:p-10">
                             <div id="flashcards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto pb-10"></div>
@@ -205,35 +212,32 @@
                     </div>
                 </div>
 
-                <!-- 4. Presentation Viewer -->
-                <div id="view-presentation" class="absolute inset-0 hidden bg-gray-50 flex flex-col overflow-hidden">
-                    <!-- List View -->
-                    <div id="presentation-list-view" class="w-full h-full p-4 sm:p-8 flex flex-col overflow-y-auto">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="presentation_title">Your Presentations</h2>
-                        <div id="empty-presentation" class="flex-1 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl" data-i18n="empty_presentation">No presentations generated yet. Use the tools menu to create one.</div>
-                        <div id="presentation-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10"></div>
+                <!-- 4. Minimalist Presentation Viewer -->
+                <div id="view-presentation" class="absolute inset-0 hidden bg-white flex-col">
+                    <div id="presentation-list-view" class="flex-1 p-6 overflow-y-auto">
+                        <div id="empty-presentation" class="h-full flex items-center justify-center text-gray-400" data-i18n="no_items">No items generated yet.</div>
+                        <div id="presentation-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
                     </div>
-                    <!-- Detail View -->
-                    <div id="presentation-detail-view" class="hidden flex-1 w-full h-full bg-white flex flex-col relative overflow-hidden">
-                        <button onclick="backToList('presentation')" class="absolute top-4 left-4 z-30 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg> Back</button>
+                    <div id="presentation-detail-view" class="hidden absolute inset-0 bg-white flex flex-col">
+                        <div class="absolute top-4 left-4 z-20">
+                            <button class="back-to-list-btn px-3 py-1.5 bg-gray-100/80 hover:bg-gray-200 rounded-lg text-sm text-gray-700 font-medium flex items-center gap-1 backdrop-blur-sm shadow-sm transition-colors" data-target="presentation">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                                <span data-i18n="back_to_list">Back to List</span>
+                            </button>
+                        </div>
                         
-                        <div id="presentation-container-wrapper" class="flex-1 w-full flex flex-col justify-between pt-16 pb-4 sm:px-6">
-                            <div class="flex-1 flex items-center justify-between w-full h-full">
+                        <div id="presentation-container-wrapper" class="flex-1 w-full flex flex-col justify-between relative p-4 sm:p-6 overflow-hidden">
+                            <div class="flex-1 flex items-center justify-between w-full h-full pt-8">
                                 <button id="slide-prev" class="p-2 sm:p-4 text-gray-400 hover:text-black transition-colors disabled:opacity-10 shrink-0 outline-none">
                                     <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                                 </button>
-                                
                                 <div class="flex-1 flex items-center justify-center px-4 sm:px-12 max-w-5xl h-full overflow-y-auto scrollbar-hide">
-                                    <div id="slide-content-area" class="w-full text-center transition-all duration-300 transform text-black">
-                                        <!-- Dynamic Slide Content -->
-                                    </div>
+                                    <div id="slide-content-area" class="w-full transition-all duration-300 transform text-black"></div>
                                 </div>
-                                
                                 <button id="slide-next" class="p-2 sm:p-4 text-gray-400 hover:text-black transition-colors disabled:opacity-10 shrink-0 outline-none">
                                     <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 </button>
                             </div>
-                            
                             <div class="h-8 flex items-center justify-center text-xs font-mono text-gray-400 select-none border-t border-gray-100 mt-2 pt-2">
                                 <span id="current-slide-num">1</span> <span class="mx-1">/</span> <span id="total-slides-num">1</span>
                             </div>
@@ -243,7 +247,7 @@
             </div>
         </section>
 
-        <!-- Right Chat Panel - Offcanvas on small screens -->
+        <!-- Right Chat Panel (Off-canvas on mobile) -->
         <aside id="right-sidebar" class="w-80 border-l flex flex-col shrink-0 bg-white fixed inset-y-0 right-0 transform translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 h-full shadow-2xl lg:shadow-none">
             <div class="p-4 border-b flex justify-between items-center bg-gray-50 lg:bg-white pl-12 lg:pl-4">
                 <button id="close-right-sidebar" class="absolute top-4 left-4 lg:hidden text-gray-500 hover:text-gray-800 p-1">
@@ -264,69 +268,92 @@
         </aside>
     </main>
 
-    <!-- Generation Setup Modal -->
+    <!-- Generation Options Modal -->
     <div id="generation-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-gray-100">
-            <h3 id="generation-modal-title" class="text-xl font-bold text-gray-900 mb-1">Create</h3>
-            <p class="text-sm text-gray-500 mb-5">Select source documents and set an optional focus topic.</p>
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-gray-100">
+            <h3 id="generation-modal-title" class="text-lg font-bold text-gray-900 mb-2" data-i18n="gen_options">Generation Options</h3>
+            <p class="text-sm text-gray-500 mb-4" id="generation-modal-desc">Configure your generation source and topic.</p>
             
-            <div class="mb-5">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Source Documents</label>
-                <div id="generation-docs-list" class="max-h-40 overflow-y-auto border border-gray-200 rounded-xl p-2 space-y-1 bg-gray-50 text-sm shadow-inner custom-scroll">
-                    <!-- Checkboxes inject dynamically -->
-                </div>
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-gray-700 mb-1" data-i18n="source_doc">Source Document</label>
+                <select id="generation-source" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                    <option value="all" data-i18n="all_docs">All Uploaded Documents</option>
+                </select>
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Topic / Focus (Optional)</label>
-                <input type="text" id="generation-topic" placeholder="e.g., Methodology, Core Findings..." class="w-full border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow bg-gray-50 hover:bg-white focus:bg-white">
+                <label class="block text-xs font-bold text-gray-700 mb-1" data-i18n="presentation_topic_label">Topic (Optional)</label>
+                <input type="text" id="generation-topic" data-i18n-placeholder="gen_topic_placeholder" placeholder="Enter topic..." class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
 
-            <div class="flex justify-end gap-3 pt-2 border-t border-gray-100">
-                <button id="btn-cancel-generation" class="px-5 py-2.5 border rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Cancel</button>
-                <button id="btn-confirm-generation" class="px-5 py-2.5 bg-gray-900 hover:bg-black text-white font-semibold rounded-xl text-sm transition-colors shadow-md hover:shadow-lg">Generate</button>
+            <div class="flex justify-end gap-3">
+                <button id="btn-cancel-generation" class="px-4 py-2 border rounded-lg text-sm text-gray-600 hover:bg-gray-50" data-i18n="cancel">Cancel</button>
+                <button id="btn-confirm-generation" class="px-4 py-2 bg-gray-900 hover:bg-black text-white font-medium rounded-lg text-sm flex items-center gap-2">
+                    <span data-i18n="generate">Generate</span>
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Set PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         const translations = {
             EN: {
-                brand: "ReSearcherAI", sources_title: "Sources", upload_btn: "Upload PDFs", no_docs: "No documents uploaded.", uploaded_docs: "Uploaded Documents",
+                brand: "ReSearcherAI", sources_title: "Sources", upload_btn: "Upload PDFs", no_docs: "No documents uploaded.",
                 gen_tools_title: "GENERATION TOOLS", create_mindmap: "Create Mindmap", create_flashcards: "Create Flashcards", create_presentation: "Create Presentation",
                 doc_viewer: "Document Viewer", mindmap_title: "Mindmap", flashcards_title: "Flashcards", presentation_title: "Presentation",
                 select_doc: "Select a document to view", assistant_title: "Research Assistant", clear_btn: "Clear",
-                empty_mindmap: "No mindmaps generated yet. Use the tools menu to create one.", empty_flashcards: "No flashcards generated yet. Use the tools menu to create one.", empty_presentation: "No presentations generated yet. Use the tools menu to create one.",
                 welcome_msg: "Hello! I am ready to help. Please upload your documents to begin analysis.",
                 ask_placeholder: "Ask questions...", tooltip_title: "How to get your API Key:",
                 tooltip_steps: [
                     'Visit <a href="https://aistudio.google.com/" target="_blank" class="text-blue-600 underline">Google AI Studio</a>.',
                     'Sign in with your Google account.', 'Click \'Get API key\'.', 'Click \'Create API key\'.',
                     'Select project type.', 'Copy the key.', 'Paste it here.'
-                ]
+                ],
+                back_to_list: "Back to List", gen_options: "Generation Options", source_doc: "Source Document",
+                all_docs: "All Uploaded Documents", cancel: "Cancel", generate: "Generate", no_items: "No items generated yet.",
+                gen_topic_placeholder: "Enter topic (e.g., Methodology) or leave blank...",
+                presentation_topic_label: "Topic (Optional)", uploaded_docs_header: "Uploaded Documents"
             },
             AR: {
-                brand: "ريسيرشر آي", sources_title: "المصادر", upload_btn: "رفع ملفات PDF", no_docs: "لا توجد مستندات مرفوعة.", uploaded_docs: "المستندات المرفوعة",
+                brand: "ريسيرشر آي", sources_title: "المصادر", upload_btn: "رفع ملفات PDF", no_docs: "لا توجد مستندات مرفوعة.",
                 gen_tools_title: "أدوات التوليد", create_mindmap: "إنشاء خريطة ذهنية", create_flashcards: "إنشاء بطاقات تعليمية", create_presentation: "إنشاء عرض تقديمي",
                 doc_viewer: "عرض المستند", mindmap_title: "خريطة ذهنية", flashcards_title: "بطاقات تعليمية", presentation_title: "عرض تقديمي",
                 select_doc: "اختر مستنداً للعرض", assistant_title: "مساعد البحث", clear_btn: "مسح",
-                empty_mindmap: "لم يتم إنشاء خرائط ذهنية بعد. استخدم قائمة الأدوات لإنشاء واحدة.", empty_flashcards: "لم يتم إنشاء بطاقات تعليمية بعد. استخدم قائمة الأدوات لإنشاء واحدة.", empty_presentation: "لم يتم إنشاء عروض تقديمية بعد. استخدم قائمة الأدوات لإنشاء واحدة.",
                 welcome_msg: "أهلاً! أنا هنا للمساعدة. يرجى رفع مستنداتك للبدء بالتحليل.",
                 ask_placeholder: "اطرح أسئلة...", tooltip_title: "كيفية الحصول على مفتاح API:",
                 tooltip_steps: [
                     'قم بزيارة <a href="https://aistudio.google.com/" target="_blank" class="text-blue-600 underline">Google AI Studio</a>.',
                     'سجّل الدخول بحساب Google الخاص بك.', 'انقر فوق "Get API key".', 'انقر فوق "Create API key".',
                     'اختر نوع المشروع.', 'انسخ المفتاح.', 'الصقه هنا.'
-                ]
+                ],
+                back_to_list: "العودة للقائمة", gen_options: "خيارات التوليد", source_doc: "المستند المصدر",
+                all_docs: "جميع المستندات المرفوعة", cancel: "إلغاء", generate: "توليد", no_items: "لم يتم إنشاء أي عناصر بعد.",
+                gen_topic_placeholder: "أدخل الموضوع (مثال: المنهجية) أو اتركه فارغاً...",
+                presentation_topic_label: "موضوع محدد (اختياري)", uploaded_docs_header: "المستندات المرفوعة"
             }
         };
 
         let currentLang = 'EN';
         const apiInput = document.getElementById('api-key');
         const statusDot = document.getElementById('status-dot');
+
+        const state = { 
+            files: [], 
+            network: null,
+            currentPdf: null,
+            pdfPageNum: 1,
+            pdfPageCount: 1,
+            pdfZoom: 0.8,
+            isRendering: false,
+            renderPending: false,
+            slides: [],
+            currentSlideIndex: 0,
+            highlightSearchText: null,
+            savedItems: { mindmap: [], flashcards: [], presentation: [] },
+            currentGenerationType: null
+        };
 
         function updateUI() {
             document.body.dir = currentLang === 'AR' ? 'rtl' : 'ltr';
@@ -341,6 +368,71 @@
                     li.innerHTML = step;
                     stepList.appendChild(li);
                 });
+            }
+            renderFileList();
+            renderSavedLists();
+        }
+
+        function renderFileList() {
+            const listContainer = document.getElementById('file-list');
+            if (!listContainer) return;
+            
+            if (state.files.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-6 border border-dashed rounded-lg">${translations[currentLang].no_docs}</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            state.files.forEach(f => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-2 hover:bg-gray-200 rounded cursor-pointer transition-colors border-b border-gray-100 last:border-b-0";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2 truncate flex-1 selectPdfBtn" data-id="${f.id}">
+                        <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        <span class="text-gray-700 truncate font-medium">${f.name}</span>
+                    </div>
+                `;
+                item.querySelector('.selectPdfBtn').onclick = () => selectPdf(f.id, item);
+                listContainer.appendChild(item);
+            });
+        }
+
+        function renderSavedLists() {
+            ['mindmap', 'flashcards', 'presentation'].forEach(type => {
+                renderListView(type);
+            });
+        }
+
+        function showLoading(msg) {
+            const spinner = document.getElementById('loading-spinner');
+            const text = document.getElementById('loading-text');
+            const overlay = document.getElementById('loading-overlay');
+            if (spinner) spinner.style.display = 'block';
+            if (text) text.innerHTML = msg;
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            }
+        }
+
+        function showError(msg) {
+            const spinner = document.getElementById('loading-spinner');
+            const text = document.getElementById('loading-text');
+            const overlay = document.getElementById('loading-overlay');
+            if (spinner) spinner.style.display = 'none';
+            if (text) text.innerHTML = `<span class="text-red-500 font-bold">Error:</span> <br> ${msg}`;
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            }
+            setTimeout(hideLoading, 5000); 
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
             }
         }
 
@@ -382,95 +474,64 @@
         document.getElementById('close-right-sidebar')?.addEventListener('click', closeAllSidebars);
         sidebarOverlay?.addEventListener('click', closeAllSidebars);
 
-        // --- CORE STATE & UI HELPERS ---
-        const state = { 
-            files: [], 
-            network: null,
-            currentPdf: null,
-            pdfPageNum: 1,
-            pdfPageCount: 1,
-            pdfZoom: 0.8, // Set default to 80%
-            isRendering: false,
-            renderPending: false,
-            highlightSearchText: null,
+        // --- TAB SWITCHING ---
+        document.querySelectorAll('.view-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => switchTab(e.target.getAttribute('data-tab')));
+        });
 
-            // Multi-generation support
-            currentGenerationType: null,
-            savedPresentations: [],
-            savedFlashcards: [],
-            savedMindmaps: [],
-            
-            // View specific states
-            slides: [],
-            currentSlideIndex: 0
-        };
+        function switchTab(tabName) {
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('active-tab', 'text-gray-900');
+                    tab.classList.remove('text-gray-400', 'border-transparent');
+                } else {
+                    tab.classList.remove('active-tab', 'text-gray-900');
+                    tab.classList.add('text-gray-400', 'border-transparent');
+                }
+            });
 
-        function showLoading(msg) {
-            const spinner = document.getElementById('loading-spinner');
-            const text = document.getElementById('loading-text');
-            const overlay = document.getElementById('loading-overlay');
-            if (spinner) spinner.style.display = 'block';
-            if (text) text.innerHTML = msg;
-            if (overlay) {
-                overlay.classList.remove('hidden');
-                overlay.classList.add('flex');
-            }
+            ['document', 'mindmap', 'flashcards', 'presentation'].forEach(name => {
+                document.getElementById(`view-${name}`)?.classList.add('hidden');
+            });
+            document.getElementById(`view-${tabName}`)?.classList.remove('hidden');
         }
 
-        function showError(msg) {
-            const spinner = document.getElementById('loading-spinner');
-            const text = document.getElementById('loading-text');
-            const overlay = document.getElementById('loading-overlay');
-            if (spinner) spinner.style.display = 'none';
-            if (text) text.innerHTML = `<span class="text-red-500 font-bold">Error:</span> <br> ${msg}`;
-            if (overlay) {
-                overlay.classList.remove('hidden');
-                overlay.classList.add('flex');
+        // --- LOCAL PDF TEXT EXTRACTION ENGINE ---
+        async function extractPdfText(pdfDoc) {
+            let fullText = "";
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const page = await pdfDoc.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(" ");
+                fullText += `[Page ${i}]\n${pageText}\n\n`;
             }
-            setTimeout(hideLoading, 6000); 
+            return fullText;
         }
 
-        function hideLoading() {
-            const overlay = document.getElementById('loading-overlay');
-            if (overlay) {
-                overlay.classList.add('hidden');
-                overlay.classList.remove('flex');
-            }
-        }
-
-        // --- PDF HANDLING (PDF.js Canvas Engine) ---
         document.getElementById('pdf-input')?.addEventListener('change', async (e) => {
             if (e.target.files.length > 0) {
-                showLoading("Processing PDF(s)...");
-                const noDocsMsg = document.getElementById('no-docs-msg');
-                const ul = document.getElementById('pdf-list-container');
-                
-                if (noDocsMsg) noDocsMsg.classList.add('hidden');
-                if (ul) ul.classList.remove('hidden');
+                showLoading("Ingesting and Extracting text from PDF(s) locally...");
                 
                 for (let file of e.target.files) {
                     const id = 'pdf_' + Math.random().toString(36).substr(2, 9);
-                    
                     const arrayBuffer = await file.arrayBuffer();
-                    const base64 = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result.split(',')[1]);
-                        reader.readAsDataURL(file);
-                    });
-
-                    state.files.push({ id, name: file.name, arrayBuffer, base64 });
                     
-                    if (ul) {
-                        const li = document.createElement('li');
-                        li.className = "cursor-pointer truncate p-2 rounded hover:bg-gray-100 transition-colors text-gray-700 font-medium flex items-center gap-2";
-                        li.innerHTML = `<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg> ${file.name}`;
-                        li.onclick = () => selectPdf(id, li);
-                        ul.appendChild(li);
-                    }
+                    // Direct PDF load for context generation
+                    const docInstance = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const extractedText = await extractPdfText(docInstance);
+
+                    state.files.push({ 
+                        id, 
+                        name: file.name, 
+                        arrayBuffer, 
+                        extractedText 
+                    });
                 }
                 
-                if (state.files.length > 0 && ul) {
-                    ul.lastChild.click();
+                renderFileList();
+                if (state.files.length > 0) {
+                    const firstFileNode = document.querySelector('.selectPdfBtn');
+                    if (firstFileNode) firstFileNode.click();
                 }
                 hideLoading();
             }
@@ -495,13 +556,13 @@
                     if (window.innerWidth < 1024) closeAllSidebars();
                 } catch (err) {
                     console.error("PDF.js loading error: ", err);
-                    showError("Could not render PDF. File may be corrupted or incompatible.");
+                    showError("Could not render PDF viewer locally.");
                 }
                 
-                document.querySelectorAll('#pdf-list-container li').forEach(li => {
-                    li.classList.remove('bg-gray-200', 'text-gray-900');
+                document.querySelectorAll('#file-list > div').forEach(item => {
+                    item.classList.remove('bg-gray-200');
                 });
-                liElement.classList.add('bg-gray-200', 'text-gray-900');
+                if (liElement) liElement.classList.add('bg-gray-200');
             }
         }
 
@@ -605,95 +666,92 @@
             }
         });
 
-        // --- TAB SWITCHING ---
-        document.querySelectorAll('.view-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => switchTab(e.target.getAttribute('data-tab')));
-        });
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.view-tab').forEach(tab => {
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active-tab', 'text-gray-900');
-                    tab.classList.remove('text-gray-400', 'border-transparent');
-                } else {
-                    tab.classList.remove('active-tab', 'text-gray-900');
-                    tab.classList.add('text-gray-400', 'border-transparent');
-                }
-            });
-
-            ['document', 'mindmap', 'flashcards', 'presentation'].forEach(name => {
-                document.getElementById(`view-${name}`)?.classList.add('hidden');
-            });
-            document.getElementById(`view-${tabName}`)?.classList.remove('hidden');
-        }
-
-        // --- GEMINI API CALLS ---
-        async function fetchGemini(prompt, requireJson = false, selectedFileIds = null) {
-            const apiKey = document.getElementById('api-key')?.value.trim();
-            if (!apiKey) throw new Error("Missing Gemini API Key.<br><span class='text-xs font-normal'>Please enter it in the top right corner.</span>");
+        // --- OPTIMIZED GEMINI WRAPPER WITH EXPONENTIAL BACKOFF RETRY ---
+        async function fetchGemini(prompt, requireJson = false, selectedSource = 'all') {
+            const apiKey = document.getElementById('api-key')?.value.trim() || "";
             
-            let filesToUse = state.files;
-            if (selectedFileIds && selectedFileIds.length > 0) {
-                filesToUse = state.files.filter(f => selectedFileIds.includes(f.id));
+            // Build Context strictly out of pre-extracted local text
+            let targetFiles = state.files;
+            if (selectedSource !== 'all') {
+                targetFiles = state.files.filter(f => f.id === selectedSource);
             }
-            if (filesToUse.length === 0) throw new Error("No Documents Selected.<br><span class='text-xs font-normal'>Please upload and select at least one PDF.</span>");
+            if (targetFiles.length === 0) throw new Error("Please upload a PDF document first.");
 
-            const parts = [{ text: prompt }];
-            filesToUse.forEach(f => {
-                if (f.base64) parts.push({ inlineData: { mimeType: "application/pdf", data: f.base64 } });
-            });
+            const contextPayload = targetFiles.map(f => `--- DOCUMENT: ${f.name} ---\n${f.extractedText}`).join("\n\n");
+            
+            const optimizedPrompt = `You are ReSearcherAI. Analyze the contextual document information below to execute the task.
+            
+[CONTEXT INFO]
+${contextPayload}
+
+[TASK / PROMPT]
+${prompt}`;
 
             const payload = {
-                contents: [{ parts: parts }],
-                systemInstruction: { parts: [{ text: "You are ReSearcherAI, a highly modern research assistant. Be concise, direct, and structured." }] }
+                contents: [{ parts: [{ text: optimizedPrompt }] }],
+                systemInstruction: { parts: [{ text: "You are ReSearcherAI, a premium research assistant. Limit token outputs to preserve response speed. Answer cleanly." }] }
             };
 
             if (requireJson) {
                 payload.generationConfig = { responseMimeType: "application/json" };
             }
 
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error?.message || "API connection failed.");
-            return data.candidates[0].content.parts[0].text;
+            // 5-Turn Exponential Backoff
+            let delay = 1000;
+            for (let attempt = 0; attempt < 5; attempt++) {
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.status === 429 || res.status === 503) {
+                        throw new Error("exponential_backoff");
+                    }
+
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.error?.message || "API connection failed.");
+                    }
+                    return data.candidates[0].content.parts[0].text;
+                } catch (err) {
+                    if (err.message === "exponential_backoff" && attempt < 4) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Doubles: 1s, 2s, 4s, 8s, 16s
+                        continue;
+                    }
+                    throw err;
+                }
+            }
+            throw new Error("The model is currently overloaded. Please wait and try again.");
         }
 
-        // --- TOOLS: GENERATION MODAL & LOGIC ---
+        // --- TOOLS GENERATION LOGIC ---
         function openGenerationModal(type) {
-            if (state.files.length === 0) {
-                showError("Please upload at least one PDF first.");
-                setTimeout(hideLoading, 3000);
-                return;
-            }
-            
             state.currentGenerationType = type;
+            const titleEl = document.getElementById('generation-modal-title');
+            
             const titles = {
                 'mindmap': currentLang === 'AR' ? 'إنشاء خريطة ذهنية' : 'Create Mindmap',
                 'flashcards': currentLang === 'AR' ? 'إنشاء بطاقات تعليمية' : 'Create Flashcards',
                 'presentation': currentLang === 'AR' ? 'إنشاء عرض تقديمي' : 'Create Presentation'
             };
+            if(titleEl) titleEl.textContent = titles[type];
             
-            const titleEl = document.getElementById('generation-modal-title');
-            if (titleEl) titleEl.textContent = titles[type];
-            
-            const topicEl = document.getElementById('generation-topic');
-            if (topicEl) topicEl.value = '';
-            
-            const docsList = document.getElementById('generation-docs-list');
-            if (docsList) {
-                docsList.innerHTML = state.files.map(f => `
-                    <label class="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 bg-white border border-gray-100 rounded-lg transition-colors">
-                        <input type="checkbox" value="${f.id}" class="doc-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer" checked>
-                        <span class="truncate text-gray-700 font-medium">${f.name}</span>
-                    </label>
-                `).join('');
+            const select = document.getElementById('generation-source');
+            if(select) {
+                const allDocsText = currentLang === 'AR' ? 'جميع المستندات المرفوعة' : 'All Uploaded Documents';
+                select.innerHTML = `<option value="all">${allDocsText}</option>`;
+                state.files.forEach(f => {
+                    select.innerHTML += `<option value="${f.id}">${f.name}</option>`;
+                });
             }
-            
+
+            const topicEl = document.getElementById('generation-topic');
+            if(topicEl) topicEl.value = '';
             document.getElementById('generation-modal')?.classList.remove('hidden');
         }
 
@@ -705,33 +763,24 @@
             document.getElementById('generation-modal')?.classList.add('hidden');
         });
 
-        window.backToList = function(type) {
-            document.getElementById(`${type}-detail-view`)?.classList.add('hidden');
-            document.getElementById(`${type}-list-view`)?.classList.remove('hidden');
-        };
-
         document.getElementById('btn-confirm-generation')?.addEventListener('click', async () => {
-            const topicInput = document.getElementById('generation-topic')?.value.trim();
-            const selectedBoxes = document.querySelectorAll('.doc-checkbox:checked');
-            const selectedFileIds = Array.from(selectedBoxes).map(cb => cb.value);
-            
-            if (selectedFileIds.length === 0) {
-                alert(currentLang === 'AR' ? 'الرجاء اختيار مستند واحد على الأقل' : 'Please select at least one document.');
-                return;
-            }
-
-            document.getElementById('generation-modal')?.classList.add('hidden');
             const type = state.currentGenerationType;
-            const topicTitle = topicInput || (currentLang === 'AR' ? 'ملخص عام' : 'General Summary');
+            const topic = document.getElementById('generation-topic')?.value.trim();
+            const source = document.getElementById('generation-source')?.value;
             
+            document.getElementById('generation-modal')?.classList.add('hidden');
+
             try {
+                const loadingMsg = currentLang === 'AR' ? `جاري التوليد...` : `Generating...`;
+                showLoading(loadingMsg);
+                switchTab(type);
+
+                let prompt = "";
+                let parsedData = null;
+
                 if (type === 'mindmap') {
-                    showLoading(currentLang === 'AR' ? "تحليل المستندات وتوليد الخريطة الذهنية..." : "Analyzing document(s) & Generating Mindmap...");
-                    switchTab('mindmap');
-                    if (window.innerWidth < 1024) closeAllSidebars();
-                    
-                    const prompt = `Extract the core topics, major subconcepts, and key facts from the provided documents to construct an interactive, comprehensive mindmap.
-                    ${topicInput ? `Focus the mindmap specifically on the topic: "${topicInput}".` : ''}
+                    prompt = `Extract the core topics, major subconcepts, and key facts to construct an interactive, comprehensive mindmap.
+                    ${topic ? `Focus the mindmap specifically on the topic: "${topic}".` : ''}
                     Return ONLY a valid JSON object with this exact structure: 
                     {
                         "nodes": [
@@ -742,265 +791,218 @@
                             {"from": 1, "to": 2}
                         ]
                     }`;
-                    
-                    const responseText = await fetchGemini(prompt, true, selectedFileIds);
-                    const data = JSON.parse(responseText);
-                    
-                    const item = { id: Date.now(), title: topicTitle, date: new Date().toLocaleDateString(), data };
-                    state.savedMindmaps.push(item);
-                    renderMindmapList();
-                    openMindmapDetail(item.id);
-
+                    const responseText = await fetchGemini(prompt, true, source);
+                    parsedData = JSON.parse(responseText);
                 } else if (type === 'flashcards') {
-                    showLoading(currentLang === 'AR' ? "استخراج الحقائق وتوليد البطاقات..." : "Extracting key facts & Generating Flashcards...");
-                    switchTab('flashcards');
-                    if (window.innerWidth < 1024) closeAllSidebars();
-                    
-                    const prompt = `Generate 6-9 highly educational flashcards based on the uploaded documents to help me study.
-                    ${topicInput ? `Focus specifically on the topic: "${topicInput}".` : ''}
+                    prompt = `Generate 6-9 highly educational flashcards based on the uploaded context. 
+                    ${topic ? `Focus specifically on the topic: "${topic}".` : ''}
                     Return ONLY a JSON array with this structure: 
                     [{"front": "Question or Term", "back": "Answer or Definition"}]`;
-                    
-                    const responseText = await fetchGemini(prompt, true, selectedFileIds);
-                    const cards = JSON.parse(responseText);
-                    
-                    const item = { id: Date.now(), title: topicTitle, date: new Date().toLocaleDateString(), data: cards };
-                    state.savedFlashcards.push(item);
-                    renderFlashcardList();
-                    openFlashcardDetail(item.id);
-
+                    const responseText = await fetchGemini(prompt, true, source);
+                    parsedData = JSON.parse(responseText);
                 } else if (type === 'presentation') {
-                    showLoading(currentLang === 'AR' ? "تحليل المستندات وتوليد العرض..." : "Analyzing document(s) & Generating Presentation...");
-                    switchTab('presentation');
-                    if (window.innerWidth < 1024) closeAllSidebars();
-
                     const langInstruction = currentLang === 'AR'
-                        ? "IMPORTANT: Write the entire presentation fully in Arabic."
+                        ? "IMPORTANT: Write the entire presentation (all slide titles, points, subpoints, and contents) fully in Arabic (اللغة العربية)."
                         : "IMPORTANT: Write the entire presentation fully in English.";
 
-                    const prompt = `Generate a structured presentation based on the provided documents.
+                    prompt = `Generate a structured presentation based on the documents.
                     ${langInstruction}
-                    ${topicInput ? `Focus the presentation specifically on the topic: "${topicInput}".` : `Provide a comprehensive summary of the main points.`}
+                    ${topic ? `Focus the presentation specifically on the topic: "${topic}".` : `Provide a comprehensive summary of the main points.`}
                     Generate exactly 5-7 slides. The first slide MUST be a title slide.
                     Return ONLY a JSON array of slide objects with this structure:
                     [
                         {
                             "title": "Slide Title",
-                            "points": [ "Bullet point 1", "Bullet point 2" ],
+                            "points": [
+                                "Bullet point 1 detailing a key insight",
+                                "Bullet point 2 with secondary detail"
+                            ],
                             "isTitleSlide": true
                         }
                     ]`;
-
-                    const responseText = await fetchGemini(prompt, true, selectedFileIds);
-                    const parsedSlides = JSON.parse(responseText);
-
-                    if (Array.isArray(parsedSlides) && parsedSlides.length > 0) {
-                        const item = { id: Date.now(), title: topicTitle, date: new Date().toLocaleDateString(), data: parsedSlides };
-                        state.savedPresentations.push(item);
-                        renderPresentationList();
-                        openPresentationDetail(item.id);
-                    } else {
-                        throw new Error("Failed to read slide objects from AI response.");
-                    }
+                    const responseText = await fetchGemini(prompt, true, source);
+                    parsedData = JSON.parse(responseText);
                 }
+
+                const sourceName = source === 'all' ? (currentLang === 'AR' ? 'جميع المستندات' : 'All Documents') : state.files.find(f => f.id === source)?.name || 'Document';
+                const defaultTitle = type === 'mindmap' ? 'Mindmap' : type === 'flashcards' ? 'Flashcards Deck' : 'Presentation';
+                
+                const newItem = {
+                    id: Date.now().toString(),
+                    title: topic || defaultTitle,
+                    sourceName: sourceName,
+                    date: new Date().toLocaleDateString(),
+                    data: parsedData
+                };
+
+                state.savedItems[type].push(newItem);
+                
+                renderListView(type);
+                openItemDetail(type, newItem.id);
+
                 hideLoading();
+
             } catch (err) {
                 showError(err.message);
             }
         });
 
-        // --- RENDER LISTS & DETAIL VIEWS ---
-
-        function renderMindmapList() {
-            const grid = document.getElementById('mindmap-grid');
-            if (!grid) return;
-            if (state.savedMindmaps.length > 0) {
-                document.getElementById('empty-mindmap')?.classList.add('hidden');
-                grid.innerHTML = state.savedMindmaps.map(m => `
-                    <div onclick="openMindmapDetail(${m.id})" class="border border-gray-200 rounded-2xl p-5 cursor-pointer hover:shadow-xl hover:border-blue-400 transition-all bg-white flex flex-col gap-4 group h-36">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">${m.title}</h3>
-                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-100 shrink-0 ml-2">${m.data.nodes.length} Nodes</span>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-auto flex items-center gap-1 font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            ${m.date}
-                        </p>
-                    </div>
-                `).join('');
+        function renderListView(type) {
+            const listContainer = document.getElementById(`${type}-list`);
+            const emptyMsg = document.getElementById(`empty-${type}`);
+            
+            if (state.savedItems[type].length === 0) {
+                emptyMsg?.classList.remove('hidden');
+                listContainer?.classList.add('hidden');
+                return;
             }
-        }
 
-        window.openMindmapDetail = function(id) {
-            const item = state.savedMindmaps.find(m => m.id === id);
-            if (!item) return;
-            
-            document.getElementById('mindmap-list-view')?.classList.add('hidden');
-            document.getElementById('mindmap-detail-view')?.classList.remove('hidden');
-            
-            const container = document.getElementById('mynetwork');
-            if(!container) return;
-            
-            const options = {
-                nodes: { 
-                    shape: 'box', margin: 12, 
-                    color: { background: '#ffffff', border: '#cbd5e1', highlight: { border: '#3b82f6', background: '#eff6ff' } },
-                    font: { face: 'system-ui', size: 14, color: '#1f2937' },
-                    shadow: { enabled: true, color: 'rgba(0,0,0,0.05)', size: 5, x: 2, y: 2 }
-                },
-                edges: { color: '#9ca3af', arrows: 'to', smooth: { type: 'continuous' } },
-                physics: { forceAtlas2Based: { gravitationalConstant: -40, centralGravity: 0.01, springLength: 120 }, minVelocity: 0.75, solver: 'forceAtlas2Based' },
-                interaction: { hover: true, zoomView: true, dragView: true }
-            };
+            emptyMsg?.classList.add('hidden');
+            listContainer?.classList.remove('hidden');
+            if(listContainer) listContainer.innerHTML = '';
 
-            const nodesSet = new vis.DataSet(item.data.nodes);
-            const edgesSet = new vis.DataSet(item.data.edges);
-
-            if (state.network) state.network.destroy();
-            state.network = new vis.Network(container, { nodes: nodesSet, edges: edgesSet }, options);
-            
-            state.network.on("click", function (params) {
-                if (params.nodes.length > 0) {
-                    const matchedNode = nodesSet.get(params.nodes[0]);
-                    if (matchedNode) {
-                        const titleEl = document.getElementById('node-detail-title');
-                        const descEl = document.getElementById('node-detail-desc');
-                        if(titleEl) titleEl.textContent = matchedNode.label;
-                        if(descEl) descEl.textContent = matchedNode.description || "No description provided.";
-                        document.getElementById('mindmap-detail-panel')?.classList.remove('hidden');
-                    }
-                } else {
-                    document.getElementById('mindmap-detail-panel')?.classList.add('hidden');
-                }
+            state.savedItems[type].forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 rounded-xl p-5 cursor-pointer hover:shadow-lg hover:border-blue-300 transition-all group relative flex flex-col h-full";
+                card.innerHTML = `
+                    <div class="flex-1">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mb-3">
+                            ${type === 'mindmap' ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/></svg>' : ''}
+                            ${type === 'flashcards' ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>' : ''}
+                            ${type === 'presentation' ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>' : ''}
+                        </div>
+                        <div class="font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">${item.title}</div>
+                        <div class="text-xs text-gray-500 mb-4 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span class="truncate">${item.sourceName}</span>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold border-t border-gray-100 pt-3 flex justify-between items-center mt-auto shrink-0">
+                        <span>${item.date}</span>
+                        <span class="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">Open &rarr;</span>
+                    </div>
+                `;
+                card.onclick = () => openItemDetail(type, item.id);
+                listContainer?.appendChild(card);
             });
-        };
+        }
 
-        window.closeMindmapDetail = function() {
+        function openItemDetail(type, id) {
+            const item = state.savedItems[type].find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById(`${type}-list-view`)?.classList.add('hidden');
+            document.getElementById(`${type}-detail-view`)?.classList.remove('hidden');
+
+            if (type === 'mindmap') {
+                const container = document.getElementById('mynetwork');
+                if(!container) return;
+                const options = {
+                    nodes: { 
+                        shape: 'box', margin: 12, 
+                        color: { background: '#ffffff', border: '#cbd5e1', highlight: { border: '#3b82f6', background: '#eff6ff' } },
+                        font: { face: 'system-ui', size: 14, color: '#1f2937' },
+                        shadow: { enabled: true, color: 'rgba(0,0,0,0.05)', size: 5, x: 2, y: 2 }
+                    },
+                    edges: { color: '#9ca3af', arrows: 'to', smooth: { type: 'continuous' } },
+                    physics: { forceAtlas2Based: { gravitationalConstant: -40, centralGravity: 0.01, springLength: 120 }, minVelocity: 0.75, solver: 'forceAtlas2Based' },
+                    interaction: { hover: true, zoomView: true, dragView: true }
+                };
+                const nodesSet = new vis.DataSet(item.data.nodes);
+                const edgesSet = new vis.DataSet(item.data.edges);
+                if (state.network) state.network.destroy();
+                state.network = new vis.Network(container, { nodes: nodesSet, edges: edgesSet }, options);
+                
+                state.network.on("click", function (params) {
+                    if (params.nodes.length > 0) {
+                        const clickedNodeId = params.nodes[0];
+                        const matchedNode = nodesSet.get(clickedNodeId);
+                        if (matchedNode) {
+                            const titleEl = document.getElementById('node-detail-title');
+                            const descEl = document.getElementById('node-detail-desc');
+                            const panelEl = document.getElementById('mindmap-detail-panel');
+                            if(titleEl) titleEl.textContent = matchedNode.label;
+                            if(descEl) descEl.textContent = matchedNode.description || "No description provided for this node.";
+                            if(panelEl) panelEl.classList.remove('hidden');
+                        }
+                    } else {
+                        closeMindmapDetail();
+                    }
+                });
+            } else if (type === 'flashcards') {
+                const container = document.getElementById('flashcards-container');
+                if(!container) return;
+                container.innerHTML = '';
+                item.data.forEach(card => {
+                    const cardHtml = `
+                        <div class="h-56 perspective-1000 cursor-pointer group w-full" onclick="this.querySelector('.inner').classList.toggle('rotate-y-180')">
+                            <div class="inner relative w-full h-full transition-transform duration-500 transform-style-3d shadow rounded-2xl">
+                                <div class="absolute w-full h-full backface-hidden bg-white border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-6 text-center shadow-sm">
+                                    <span class="absolute top-4 text-[10px] uppercase font-bold tracking-widest text-gray-400">Question</span>
+                                    <p class="font-bold text-gray-800 text-base px-2">${card.front}</p>
+                                </div>
+                                <div class="absolute w-full h-full backface-hidden bg-gray-50 border border-gray-300 rounded-2xl flex flex-col items-center justify-center p-6 text-center shadow-sm rotate-y-180">
+                                    <span class="absolute top-4 text-[10px] uppercase font-bold tracking-widest text-blue-500">Answer</span>
+                                    <p class="text-sm text-gray-700 overflow-y-auto max-h-full w-full custom-scroll font-medium leading-relaxed">${card.back}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += cardHtml;
+                });
+            } else if (type === 'presentation') {
+                state.slides = item.data;
+                state.currentSlideIndex = 0;
+                renderSlide();
+            }
+        }
+
+        document.querySelectorAll('.back-to-list-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const type = e.currentTarget.getAttribute('data-target');
+                document.getElementById(`${type}-list-view`)?.classList.remove('hidden');
+                document.getElementById(`${type}-detail-view`)?.classList.add('hidden');
+            });
+        });
+
+        function closeMindmapDetail() {
             document.getElementById('mindmap-detail-panel')?.classList.add('hidden');
-        };
-
-        function renderFlashcardList() {
-            const grid = document.getElementById('flashcards-grid');
-            if (!grid) return;
-            if (state.savedFlashcards.length > 0) {
-                document.getElementById('empty-flashcards')?.classList.add('hidden');
-                grid.innerHTML = state.savedFlashcards.map(m => `
-                    <div onclick="openFlashcardDetail(${m.id})" class="border border-gray-200 rounded-2xl p-5 cursor-pointer hover:shadow-xl hover:border-emerald-400 transition-all bg-white flex flex-col gap-4 group h-36">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-gray-900 group-hover:text-emerald-600 transition-colors line-clamp-2">${m.title}</h3>
-                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 shrink-0 ml-2">${m.data.length} Cards</span>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-auto flex items-center gap-1 font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            ${m.date}
-                        </p>
-                    </div>
-                `).join('');
-            }
         }
-
-        window.openFlashcardDetail = function(id) {
-            const item = state.savedFlashcards.find(m => m.id === id);
-            if (!item) return;
-            
-            document.getElementById('flashcards-list-view')?.classList.add('hidden');
-            document.getElementById('flashcards-detail-view')?.classList.remove('hidden');
-            
-            const container = document.getElementById('flashcards-container');
-            if(container) {
-                container.innerHTML = item.data.map(card => `
-                    <div class="h-56 perspective-1000 cursor-pointer group w-full" onclick="this.querySelector('.inner').classList.toggle('rotate-y-180')">
-                        <div class="inner relative w-full h-full transition-transform duration-500 transform-style-3d shadow rounded-2xl">
-                            <div class="absolute w-full h-full backface-hidden bg-white border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-6 text-center shadow-sm">
-                                <span class="absolute top-4 text-[10px] uppercase font-bold tracking-widest text-gray-400">Question</span>
-                                <p class="font-bold text-gray-800 text-base px-2">${card.front}</p>
-                            </div>
-                            <div class="absolute w-full h-full backface-hidden bg-gray-50 border border-gray-300 rounded-2xl flex flex-col items-center justify-center p-6 text-center shadow-sm rotate-y-180">
-                                <span class="absolute top-4 text-[10px] uppercase font-bold tracking-widest text-emerald-500">Answer</span>
-                                <p class="text-sm text-gray-700 overflow-y-auto max-h-full w-full custom-scroll font-medium leading-relaxed">${card.back}</p>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        };
-
-        function renderPresentationList() {
-            const grid = document.getElementById('presentation-grid');
-            if (!grid) return;
-            if (state.savedPresentations.length > 0) {
-                document.getElementById('empty-presentation')?.classList.add('hidden');
-                grid.innerHTML = state.savedPresentations.map(m => `
-                    <div onclick="openPresentationDetail(${m.id})" class="border border-gray-200 rounded-2xl p-5 cursor-pointer hover:shadow-xl hover:border-purple-400 transition-all bg-white flex flex-col gap-4 group h-36">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2">${m.title}</h3>
-                            <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100 shrink-0 ml-2">${m.data.length} Slides</span>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-auto flex items-center gap-1 font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            ${m.date}
-                        </p>
-                    </div>
-                `).join('');
-            }
-        }
-
-        window.openPresentationDetail = function(id) {
-            const item = state.savedPresentations.find(m => m.id === id);
-            if (!item) return;
-            
-            document.getElementById('presentation-list-view')?.classList.add('hidden');
-            document.getElementById('presentation-detail-view')?.classList.remove('hidden');
-            
-            state.slides = item.data;
-            state.currentSlideIndex = 0;
-            renderSlide();
-        };
 
         function renderSlide() {
             if (!state.slides || state.slides.length === 0) return;
-
             const slide = state.slides[state.currentSlideIndex];
             const contentArea = document.getElementById('slide-content-area');
-            if(!contentArea) return;
             
+            if(!contentArea) return;
             contentArea.innerHTML = '';
-
-            // Minimalist transition
             contentArea.className = "w-full text-center transition-all duration-300 transform opacity-0 scale-95 text-black";
 
-            // Enforce Right-to-Left formatting for Arabic content
-            if (currentLang === 'AR') {
-                contentArea.setAttribute('dir', 'rtl');
-            } else {
-                contentArea.removeAttribute('dir');
-            }
+            if (currentLang === 'AR') contentArea.setAttribute('dir', 'rtl');
+            else contentArea.removeAttribute('dir');
 
             setTimeout(() => {
                 if (slide.isTitleSlide) {
-                    const subtitle = currentLang === 'AR' ? 'نظرة عامة على العرض التقديمي' : 'Presentation Overview';
                     contentArea.innerHTML = `
                         <div class="space-y-6">
-                            <span class="text-xs uppercase tracking-widest font-semibold text-gray-500 border border-gray-300 px-3 py-1 rounded">${subtitle}</span>
-                            <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-black tracking-tight leading-tight">${slide.title}</h2>
-                            <div class="h-[2px] w-16 bg-black mx-auto"></div>
-                            <ul class="text-gray-800 text-base md:text-lg max-w-lg mx-auto space-y-2 mt-6 text-center font-medium">
+                            <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-black tracking-tight leading-tight">${slide.title}</h2>
+                            <div class="h-[2px] w-24 bg-black mx-auto"></div>
+                            <ul class="text-gray-800 text-base sm:text-lg max-w-xl mx-auto space-y-2 mt-8 text-center font-medium">
                                 ${slide.points ? slide.points.map(p => `<li>${p}</li>`).join('') : ''}
                             </ul>
                         </div>
                     `;
                 } else {
-                    const listAlignment = currentLang === 'AR' ? 'text-right' : 'text-left';
-                    const bulletIcon = currentLang === 'AR' ? '◀' : '•';
+                    const listAlign = currentLang === 'AR' ? 'text-right' : 'text-left';
+                    const bullet = currentLang === 'AR' ? '◀' : '•';
                     const pointsHtml = slide.points.map(p => `
-                        <li class="flex items-start gap-4 ${listAlignment} text-black text-lg md:text-xl leading-relaxed">
-                            <span class="font-bold select-none shrink-0">${bulletIcon}</span>
-                            <span>${p}</span>
+                        <li class="flex items-start gap-4 ${listAlign} text-black text-lg md:text-xl leading-relaxed">
+                            <span class="font-bold select-none shrink-0">${bullet}</span><span>${p}</span>
                         </li>
                     `).join('');
 
                     contentArea.innerHTML = `
-                        <div class="space-y-10 ${listAlignment} max-w-3xl mx-auto">
+                        <div class="space-y-10 max-w-3xl mx-auto ${listAlign}">
                             <h3 class="text-3xl sm:text-4xl font-bold text-black border-b-2 border-black pb-4 inline-block pr-8">${slide.title}</h3>
                             <ul class="space-y-6">
                                 ${pointsHtml}
@@ -1008,7 +1010,6 @@
                         </div>
                     `;
                 }
-
                 contentArea.classList.remove('opacity-0', 'scale-95');
                 contentArea.classList.add('opacity-100', 'scale-100');
             }, 150);
@@ -1077,7 +1078,7 @@
                 }
             }
 
-            // Fallback: search individual words if exact phrase not found in a single span
+            // Fallback: search individual words
             if (!found) {
                 const words = searchText.split(' ').filter(w => w.length > 3);
                 for (let span of spans) {
@@ -1085,7 +1086,6 @@
                     for (let word of words) {
                         if (text.includes(word)) {
                             span.classList.add('highlight');
-                            // break out of word loop, move to next span
                             break; 
                         }
                     }
@@ -1102,13 +1102,11 @@
                 const container = document.getElementById('chat-messages');
                 if(!container) return;
                 
-                // User Message
                 container.innerHTML += `<div class="p-3 bg-gray-100 border border-gray-200 rounded-lg rounded-br-none text-sm self-end ml-8 text-gray-800">${msg}</div>`;
                 e.target.value = '';
-                e.target.disabled = true; // prevent spamming
+                e.target.disabled = true; 
                 container.scrollTop = container.scrollHeight;
 
-                // Add typing indicator
                 const typingId = 'typing-' + Date.now();
                 container.innerHTML += `
                     <div id="${typingId}" class="flex gap-2 items-start mt-4">
@@ -1125,24 +1123,24 @@
                 container.scrollTop = container.scrollHeight;
 
                 try {
-                    // Update prompt to demand specific citation format
-                    const prompt = `User query: ${msg}\n\nAnswer the query comprehensively using ONLY the uploaded PDF context. 
+                    const langInstructionChat = currentLang === 'AR' 
+                        ? "IMPORTANT: You MUST answer the query entirely in Arabic (اللغة العربية)." 
+                        : "IMPORTANT: You MUST answer the query entirely in English.";
+
+                    const prompt = `User query: ${msg}\n\nAnswer the query comprehensively using ONLY the context provided. 
+                    ${langInstructionChat}
                     // IMPORTANT: When citing information, use the format [[Page X: "Quote"]] so I can link directly to the source.
                     // Use simple markdown formatting (like **bold**) if needed.`;
                     
                     const reply = await fetchGemini(prompt);
                     
-                    // Remove typing indicator
                     const typingIndicator = document.getElementById(typingId);
                     if (typingIndicator) typingIndicator.remove();
 
-                    // Parse markdown and citations
                     let formattedReply = reply
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         .replace(/\n/g, '<br>');
                         
-                    // Process citations into clickable links
-                    // Updated regex to be more flexible: matches [[Page 3: "quote"]] or [Page 3] or [Pg 3]
                     const citationRegex = /\[(?:\[)?(?:Page|Pg)\s+(\d+)(?::\s+"([^"]+)")?(?:\])?\]/g;
                     formattedReply = formattedReply.replace(citationRegex, (match, pageNum, quote) => {
                         const escapedQuote = quote ? quote.replace(/'/g, "\\'").replace(/"/g, '&quot;') : "";
@@ -1174,13 +1172,10 @@
             }
         });
 
-        // Global function to handle citation clicks from injected HTML
         window.handleCitationClick = function(pageNum, quote) {
-            // Switch to Document Viewer tab if not already there
             switchTab('document');
             if (window.innerWidth < 1024) closeAllSidebars();
             
-            // Navigate and attempt to highlight
             const pageNumber = parseInt(pageNum, 10);
             if (!isNaN(pageNumber) && state.currentPdf && pageNumber <= state.pdfPageCount && pageNumber > 0) {
                 highlightTextOnPage(pageNumber, quote);
