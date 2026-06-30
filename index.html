@@ -44,6 +44,7 @@
 </head>
 <body class="h-screen flex flex-col bg-white text-gray-800 overflow-hidden">
 
+    <header class="h-16 border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 shrink-0 bg-white z-50 relative">
     <!-- Header: Explicit z-20 to sit clean over mobile drawers -->
     <header class="h-16 border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 shrink-0 bg-white z-20 relative">
         <div class="flex items-center gap-3">
@@ -55,15 +56,15 @@
             <h1 class="font-bold text-lg sm:text-xl" data-i18n="brand">ReSearcherAI</h1>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-4">
-            <button id="lang-toggle" class="px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 rounded font-bold transition-colors">EN / AR</button>
+        <div class="flex items-center gap-2 sm:gap-2">
+            <button id="lang-toggle" class="px-2 py-1 sm:px-2 sm:py-1.5 text-xs sm:text-xs bg-gray-100 hover:bg-gray-200 rounded font-bold transition-colors">EN / AR</button>
             <div class="flex items-center gap-2">
                 <input type="password" id="api-key" placeholder="Gemini API Key..." class="border rounded px-2 py-1.5 sm:px-3 sm:py-1.5 text-xs sm:text-sm w-28 sm:w-64 focus:outline-none focus:ring-1 focus:ring-gray-400">
                 
                 <!-- Fixed Tooltip Z-indexing context -->
                 <div class="relative group cursor-pointer hidden sm:block z-50">
                     <div class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200">?</div>
-                    <div id="api-tooltip" class="absolute right-0 top-8 hidden group-hover:block w-72 bg-white border border-gray-200 text-gray-800 text-xs p-4 rounded-lg shadow-xl z-[90]">
+                    <div id="api-tooltip" class="absolute right-0 top-8 hidden group-hover:block w-72 bg-white border border-gray-200 text-gray-800 text-xs p-4 rounded-lg shadow-xl z-50">
                         <p class="font-bold mb-2" data-i18n="tooltip_title">How to get your API Key:</p>
                         <ol id="tooltip-steps" class="list-decimal list-inside space-y-1.5"></ol>
                     </div>
